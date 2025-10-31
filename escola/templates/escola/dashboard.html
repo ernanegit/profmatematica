@@ -1,0 +1,168 @@
+<!-- templates/escola/dashboard.html -->
+{% extends 'escola/base.html' %}
+
+{% block title %}Dashboard - Sistema Escolar{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2>Dashboard</h2>
+    <p class="text-muted">Visão geral das suas turmas e atividades</p>
+</div>
+
+<!-- Cards de Estatísticas -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-subtitle mb-2">Total de Turmas</h6>
+                        <h2 class="card-title mb-0">{{ total_turmas }}</h2>
+                    </div>
+                    <i class="bi bi-people fs-1"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card" style="background: linear-gradient(135deg, #059669, #10b981); color: white;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-subtitle mb-2">Atividades Recentes</h6>
+                        <h2 class="card-title mb-0">{{ atividades_recentes|length }}</h2>
+                    </div>
+                    <i class="bi bi-journal-text fs-1"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card" style="background: linear-gradient(135deg, #dc2626, #ef4444); color: white;">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-subtitle mb-2">Entregas Pendentes</h6>
+                        <h2 class="card-title mb-0">{{ entregas_pendentes }}</h2>
+                    </div>
+                    <i class="bi bi-clock-history fs-1"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Turmas -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Minhas Turmas</h5>
+                <a href="{% url 'escola:criar_turma' %}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus-circle"></i> Nova Turma
+                </a>
+            </div>
+            <div class="card-body">
+                {% if turmas %}
+                    <div class="list-group list-group-flush">
+                        {% for turma in turmas %}
+                            <a href="{% url 'escola:detalhes_turma' turma.pk %}" class="list-group-item list-group-item-action">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ turma.nome }}</h6>
+                                        <small class="text-muted">
+                                            <i class="bi bi-person"></i> {{ turma.total_alunos }} alunos
+                                            | <i class="bi bi-journal"></i> {{ turma.total_atividades }} atividades
+                                        </small>
+                                    </div>
+                                    <span class="badge badge-custom">{{ turma.ano }}</span>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox fs-1 text-muted"></i>
+                        <p class="text-muted mt-2">Nenhuma turma cadastrada ainda.</p>
+                        <a href="{% url 'escola:criar_turma' %}" class="btn btn-primary">Criar Primeira Turma</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Atividades Recentes -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Atividades Recentes</h5>
+            </div>
+            <div class="card-body">
+                {% if atividades_recentes %}
+                    <div class="list-group list-group-flush">
+                        {% for atividade in atividades_recentes %}
+                            <a href="{% url 'escola:detalhes_atividade' atividade.pk %}" class="list-group-item list-group-item-action">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ atividade.titulo }}</h6>
+                                        <small class="text-muted">
+                                            {{ atividade.turma.nome }} | Entrega: {{ atividade.data_entrega|date:"d/m/Y H:i" }}
+                                        </small>
+                                    </div>
+                                    <span class="badge bg-info">{{ atividade.valor_pontos }} pts</span>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-clipboard-x fs-1 text-muted"></i>
+                        <p class="text-muted mt-2">Nenhuma atividade criada ainda.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ações Rápidas -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Ações Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'escola:criar_turma' %}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="bi bi-people-fill d-block fs-1 mb-2"></i>
+                            Nova Turma
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'escola:criar_aluno' %}" class="btn btn-outline-success btn-lg w-100">
+                            <i class="bi bi-person-plus-fill d-block fs-1 mb-2"></i>
+                            Novo Aluno
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'escola:lista_turmas' %}" class="btn btn-outline-info btn-lg w-100">
+                            <i class="bi bi-folder-fill d-block fs-1 mb-2"></i>
+                            Materiais
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{% url 'escola:lista_alunos' %}" class="btn btn-outline-warning btn-lg w-100">
+                            <i class="bi bi-bar-chart-fill d-block fs-1 mb-2"></i>
+                            Ver Notas
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

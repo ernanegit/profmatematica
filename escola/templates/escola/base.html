@@ -1,0 +1,104 @@
+<!-- templates/escola/base.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema Escolar{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #7c3aed;
+        }
+        
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .sidebar a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            display: block;
+            transition: all 0.3s;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .badge-custom {
+            background: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar text-white p-0">
+                <div class="p-3">
+                    <h4 class="mb-4"><i class="bi bi-mortarboard-fill"></i> Sistema Escolar</h4>
+                    <div class="mb-3">
+                        <small>Olá, {{ user.username }}!</small>
+                    </div>
+                </div>
+                <nav>
+                    <a href="{% url 'escola:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                        <i class="bi bi-house-door"></i> Dashboard
+                    </a>
+                    <a href="{% url 'escola:lista_turmas' %}" class="{% if 'turmas' in request.path %}active{% endif %}">
+                        <i class="bi bi-people"></i> Turmas
+                    </a>
+                    <a href="{% url 'escola:lista_alunos' %}" class="{% if 'alunos' in request.path %}active{% endif %}">
+                        <i class="bi bi-person"></i> Alunos
+                    </a>
+                    <hr class="bg-white">
+                    <a href="{% url 'admin:index' %}">
+                        <i class="bi bi-gear"></i> Administração
+                    </a>
+                    <a href="{% url 'logout' %}">
+                        <i class="bi bi-box-arrow-right"></i> Sair
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 p-4">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

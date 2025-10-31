@@ -1,0 +1,84 @@
+{% extends 'escola/base.html' %}
+
+{% block title %}Avaliar Entrega{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2>Avaliar Entrega</h2>
+    <p class="text-muted">
+        Aluno: <strong>{{ entrega.aluno.nome }}</strong> | 
+        Atividade: <strong>{{ entrega.atividade.titulo }}</strong>
+    </p>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Informações da Entrega</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Aluno:</strong> {{ entrega.aluno.nome }}</p>
+                <p><strong>Atividade:</strong> {{ entrega.atividade.titulo }}</p>
+                <p><strong>Data de Entrega:</strong> 
+                    {% if entrega.data_entrega %}
+                        {{ entrega.data_entrega|date:"d/m/Y H:i" }}
+                    {% else %}
+                        Não entregue
+                    {% endif %}
+                </p>
+                <p><strong>Valor da Atividade:</strong> {{ entrega.atividade.valor_pontos }} pontos</p>
+                
+                {% if entrega.arquivo %}
+                <hr>
+                <a href="{{ entrega.arquivo.url }}" class="btn btn-outline-primary" download>
+                    <i class="bi bi-download"></i> Baixar Arquivo da Entrega
+                </a>
+                {% endif %}
+
+                {% if entrega.comentario_aluno %}
+                <hr>
+                <p><strong>Comentário do Aluno:</strong></p>
+                <p>{{ entrega.comentario_aluno }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Avaliação</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.valor.label }} (0 a 10)</label>
+                        {{ form.valor }}
+                        {% if form.valor.errors %}
+                            <div class="text-danger">{{ form.valor.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.comentario_professor.label }}</label>
+                        {{ form.comentario_professor }}
+                        {% if form.comentario_professor.errors %}
+                            <div class="text-danger">{{ form.comentario_professor.errors }}</div>
+                        {% endif %}
+                        <small class="text-muted d-block">Feedback para o aluno</small>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Salvar Avaliação
+                        </button>
+                        <a href="{% url 'escola:detalhes_atividade' entrega.atividade.pk %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
