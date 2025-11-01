@@ -1,0 +1,73 @@
+<!-- templates/escola/form_aluno.html -->
+{% extends 'escola/base.html' %}
+
+{% block title %}Novo Aluno{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2>Cadastrar Novo Aluno</h2>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.nome.label }}</label>
+                        {{ form.nome }}
+                        {% if form.nome.errors %}
+                            <div class="text-danger">{{ form.nome.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ form.matricula.label }}</label>
+                            {{ form.matricula }}
+                            {% if form.matricula.errors %}
+                                <div class="text-danger">{{ form.matricula.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ form.email.label }}</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.data_nascimento.label }}</label>
+                        {{ form.data_nascimento }}
+                        {% if form.data_nascimento.errors %}
+                            <div class="text-danger">{{ form.data_nascimento.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.turmas.label }}</label>
+                        <div class="border rounded p-3">
+                            {{ form.turmas }}
+                        </div>
+                        {% if form.turmas.errors %}
+                            <div class="text-danger">{{ form.turmas.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Salvar
+                        </button>
+                        <a href="{% url 'escola:lista_alunos' %}" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

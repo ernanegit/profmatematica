@@ -1,0 +1,84 @@
+<!-- templates/escola/detalhes_aluno.html -->
+{% extends 'escola/base.html' %}
+
+{% block title %}{{ aluno.nome }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2>{{ aluno.nome }}</h2>
+    <p class="text-muted">Matrícula: {{ aluno.matricula }} | Email: {{ aluno.email }}</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Informações</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Nome:</strong> {{ aluno.nome }}</p>
+                <p><strong>Matrícula:</strong> {{ aluno.matricula }}</p>
+                <p><strong>Email:</strong> {{ aluno.email }}</p>
+                {% if aluno.data_nascimento %}
+                <p><strong>Data de Nascimento:</strong> {{ aluno.data_nascimento|date:"d/m/Y" }}</p>
+                {% endif %}
+                <hr>
+                <p><strong>Turmas:</strong></p>
+                {% for turma in aluno.turmas.all %}
+                    <a href="{% url 'escola:detalhes_turma' turma.pk %}" class="badge bg-primary mb-1">{{ turma.nome }}</a><br>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Histórico de Entregas</h5>
+            </div>
+            <div class="card-body">
+                {% if entregas %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Atividade</th>
+                                    <th>Turma</th>
+                                    <th>Status</th>
+                                    <th>Nota</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entrega in entregas %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'escola:detalhes_atividade' entrega.atividade.pk %}">
+                                            {{ entrega.atividade.titulo }}
+                                        </a>
+                                    </td>
+                                    <td>{{ entrega.atividade.turma.nome }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if entrega.status == 'AVALIADO' %}success{% elif entrega.status == 'ENTREGUE' %}info{% else %}warning{% endif %}">
+                                            {{ entrega.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if entrega.nota %}
+                                            <strong class="text-success">{{ entrega.nota.valor }}</strong>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">Nenhuma entrega registrada.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

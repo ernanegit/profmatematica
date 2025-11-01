@@ -1,0 +1,111 @@
+<!-- templates/escola/detalhes_atividade.html -->
+{% extends 'escola/base.html' %}
+
+{% block title %}{{ atividade.titulo }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h2>{{ atividade.titulo }}</h2>
+        <p class="text-muted">
+            <i class="bi bi-people"></i> {{ atividade.turma.nome }} | 
+            <i class="bi bi-calendar"></i> Entrega: {{ atividade.data_entrega|date:"d/m/Y H:i" }} |
+            <i class="bi bi-star"></i> {{ atividade.valor_pontos }} pontos
+        </p>
+    </div>
+    <a href="{% url 'escola:editar_atividade' atividade.pk %}" class="btn btn-secondary">
+        <i class="bi bi-pencil"></i> Editar
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Informações</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Turma:</strong> {{ atividade.turma.nome }}</p>
+                <p><strong>Data de Entrega:</strong><br>{{ atividade.data_entrega|date:"d/m/Y às H:i" }}</p>
+                <p><strong>Valor:</strong> {{ atividade.valor_pontos }} pontos</p>
+                <p><strong>Criada em:</strong> {{ atividade.criado_em|date:"d/m/Y" }}</p>
+                {% if atividade.arquivo_anexo %}
+                <hr>
+                <a href="{{ atividade.arquivo_anexo.url }}" class="btn btn-sm btn-outline-primary" download>
+                    <i class="bi bi-download"></i> Baixar Anexo
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8 mb-4">
+        <div class="card mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Descrição</h5>
+            </div>
+            <div class="card-body">
+                <p>{{ atividade.descricao|linebreaks }}</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Entregas ({{ entregas.count }})</h5>
+            </div>
+            <div class="card-body">
+                {% if entregas %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Aluno</th>
+                                    <th>Status</th>
+                                    <th>Data Entrega</th>
+                                    <th>Nota</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entrega in entregas %}
+                                <tr>
+                                    <td>{{ entrega.aluno.nome }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if entrega.status == 'AVALIADO' %}success{% elif entrega.status == 'ENTREGUE' %}info{% elif entrega.status == 'ATRASADO' %}danger{% else %}warning{% endif %}">
+                                            {{ entrega.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if entrega.data_entrega %}
+                                            {{ entrega.data_entrega|date:"d/m/Y H:i" }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if entrega.nota %}
+                                            <strong class="text-success">{{ entrega.nota.valor }}</strong>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if entrega.status == 'ENTREGUE' or entrega.status == 'AVALIADO' %}
+                                            <a href="{% url 'escola:avaliar_entrega' entrega.pk %}" class="btn btn-sm btn-primary">
+                                                {% if entrega.nota %}Reavaliar{% else %}Avaliar{% endif %}
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">Nenhuma entrega registrada ainda.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

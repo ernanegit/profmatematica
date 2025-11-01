@@ -1,0 +1,71 @@
+<!-- ====================================== -->
+<!-- TEMPLATE 11: boletim_turma.html -->
+<!-- ====================================== -->
+{% extends 'escola/base.html' %}
+
+{% block title %}Boletim - {{ turma.nome }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h2>Boletim - {{ turma.nome }}</h2>
+    <p class="text-muted">Notas e médias dos alunos</p>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if boletim %}
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Aluno</th>
+                            <th>Matrícula</th>
+                            <th>Nº de Notas</th>
+                            <th>Média</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in boletim %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'escola:detalhes_aluno' item.aluno.pk %}">
+                                    {{ item.aluno.nome }}
+                                </a>
+                            </td>
+                            <td>{{ item.aluno.matricula }}</td>
+                            <td>{{ item.notas.count }}</td>
+                            <td>
+                                <strong class="{% if item.media >= 7 %}text-success{% elif item.media >= 5 %}text-warning{% else %}text-danger{% endif %}">
+                                    {{ item.media }}
+                                </strong>
+                            </td>
+                            <td>
+                                {% if item.media >= 7 %}
+                                    <span class="badge bg-success">Aprovado</span>
+                                {% elif item.media >= 5 %}
+                                    <span class="badge bg-warning">Recuperação</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Reprovado</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="alert alert-info mt-4">
+                <strong>Legenda:</strong>
+                <ul class="mb-0">
+                    <li>Média ≥ 7.0: Aprovado</li>
+                    <li>Média entre 5.0 e 6.9: Recuperação</li>
+                    <li>Média < 5.0: Reprovado</li>
+                </ul>
+            </div>
+        {% else %}
+            <p class="text-muted text-center">Nenhuma nota lançada ainda.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
